@@ -9,7 +9,7 @@ Job Seeker Dashboard: Personalized dashboard to track job applications.
 
 AI Integration: Gemini AI 1.for How well your resume matches the job 2.Missing skills or experience 3.Suggestions to improve your resume
 
-Technologies Used: Frontend: HTML, CSS, JavaScript, React
+Technologies Used: Frontend: HTML, CSS, JavaScript.
 
 API Integration: Job details fetched dynamically via API calls.
 
