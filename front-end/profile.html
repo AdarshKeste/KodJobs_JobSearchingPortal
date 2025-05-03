@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Job Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="resume-evaluation.js" defer></script>
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-header h2 {
+            color: #333;
+            margin: 0;
+        }
+
+        .profile-form {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #ff6600;
+            outline: none;
+        }
+
+        .form-group input.invalid {
+            border-color: #ff4444;
+        }
+
+        .form-group .error-message {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group input.invalid + .error-message {
+            display: block;
+        }
+
+        .resume-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .resume-upload {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .resume-name {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .required-field::after {
+            content: "*";
+            color: #ff4444;
+            margin-left: 4px;
+        }
+
+        .save-btn {
+            background: #ff6600;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .save-btn:hover {
+            background: #ff5500;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border-radius: 4px;
+            color: white;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #4CAF50;
+        }
+
+        .notification.error {
+            background: #f44336;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .skills-input-container {
+            width: 100%;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        .skill-tag .remove-skill {
+            cursor: pointer;
+            color: #ff4444;
+            font-size: 16px;
+            padding: 2px 6px;
+            margin-left: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .skill-tag .remove-skill:hover {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        #skillInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .education-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .education-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .education-row input {
+            flex: 1;
+        }
+
+        #degree, #institution, #specialization {
+            width: 100%;
+        }
+
+        .section-header {
+            font-size: 1.2rem;
+            color: #333;
+            font-weight: 600;
+            margin: 30px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ff6600;
+        }
+
+        .field-label {
+            font-weight: 500;
+            color: #666;
+            margin-right: 10px;
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-row input {
+            flex: 1;
+        }
+
+        /* Resume Evaluation Styles */
+        .evaluate-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .evaluate-btn:hover {
+            background: #45a049;
+        }
+
+        .evaluation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .evaluation-content {
+            position: relative;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .evaluation-result {
+            margin-top: 20px;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Job Portal</div>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="applications.html">My Applications</a>
+            <a href="profile.html" class="active">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <h2><i class="fas fa-user-circle"></i> My Profile</h2>
+        </div>
+
+        <div class="profile-form">
+            <form id="profileForm" onsubmit="event.preventDefault(); saveProfile();">
+                <h3 class="section-header">Personal Details</h3>
+                <div class="form-group">
+                    <div class="form-row">
+                        <span class="field-label">Full Name:</span>
+                        <input type="text" id="fullName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-row">
+                        <span class="field-label">Email:</span>
+                        <input type="email" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-row">
+                        <span class="field-label">Phone Number:</span>
+                        <input type="tel" id="phone" placeholder="Enter your 10-digit phone number" required>
+                    </div>
+                </div>
+
+                <h3 class="section-header">Educational Details</h3>
+                <div class="form-group">
+                    <div class="education-fields">
+                        <div class="form-row">
+                            <span class="field-label">Degree:</span>
+                            <input type="text" id="degree" placeholder="e.g., B.E., B.Tech" required>
+                        </div>
+                        <div class="form-row">
+                            <span class="field-label">Institution:</span>
+                            <input type="text" id="institution" placeholder="Institution Name" required>
+                        </div>
+                        <div class="form-row">
+                            <span class="field-label">Specialization:</span>
+                            <input type="text" id="specialization" placeholder="Your specialization" required>
+                        </div>
+                        <div class="form-row">
+                            <span class="field-label">Graduation Year:</span>
+                            <input type="number" id="graduationYear" placeholder="Year of Graduation" required>
+                        </div>
+                        <div class="form-row">
+                            <span class="field-label">CGPA:</span>
+                            <input type="number" id="cgpa" placeholder="Enter CGPA (0-10)" step="0.01" min="0" max="10" required>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="section-header">Skills</h3>
+                <div class="form-group">
+                    <div class="skills-input-container">
+                        <input type="text" id="skillInput" placeholder="Type a skill and press Enter">
+                        <div id="skillTags" class="skill-tags"></div>
+                    </div>
+                </div>
+
+                <h3 class="section-header">Resume</h3>
+                <div class="resume-section">
+                    <div class="resume-upload">
+                        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx" style="display: none;">
+                        <button onclick="document.getElementById('resumeFile').click()" class="save-btn">
+                            <i class="fas fa-upload"></i> Upload Resume
+                        </button>
+                        <span class="resume-name" id="resumeName"></span>
+                        <button id="evaluateResume" class="evaluate-btn">
+                            <i class="fas fa-search"></i> Evaluate Resume
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-save"></i> Save Profile
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Evaluation Modal -->
+    <div id="evaluationModal" class="evaluation-modal">
+        <div class="evaluation-content">
+            <span class="close-modal">&times;</span>
+            <h2>Resume Evaluation Results</h2>
+            <div id="evaluationResult" class="evaluation-result">
+                <div class="loading">Evaluating your resume...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let skillsArray = [];
+
+        function addSkill(skill) {
+            skill = skill.trim();
+            // Remove any special characters that might cause issues
+            skill = skill.replace(/[<>]/g, '');
+            if (skill && !skillsArray.includes(skill)) {
+                skillsArray.push(skill);
+                updateSkillTags();
+                // Clear the input field
+                document.getElementById('skillInput').value = '';
+            }
+        }
+
+        function removeSkill(skill) {
+            skillsArray = skillsArray.filter(s => s !== skill);
+            updateSkillTags();
+            // Save the profile after removing the skill
+            saveProfile();
+        }
+
+        function updateSkillTags() {
+            const skillTags = document.getElementById('skillTags');
+            skillTags.innerHTML = skillsArray.map(skill => `
+                <span class="skill-tag">
+                    ${skill}
+                    <span class="remove-skill" onclick="removeSkill('${skill.replace(/'/g, "\\'")}')" title="Remove skill">×</span>
+                </span>
+            `).join('');
+        }
+
+        function saveProfile() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Get education details
+            const degree = document.getElementById('degree').value.trim();
+            const institution = document.getElementById('institution').value.trim();
+            const specialization = document.getElementById('specialization').value.trim();
+            const graduationYear = document.getElementById('graduationYear').value.trim();
+            const cgpa = document.getElementById('cgpa').value.trim();
+
+            // Format education string
+            const education = `${degree}, ${institution}, ${specialization}, ${graduationYear}, ${cgpa}`;
+
+            // Validate required fields
+            if (!fullName || !email || !phone || !degree || !institution || !specialization || !graduationYear || !cgpa || skillsArray.length === 0) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Validate CGPA
+            const cgpaNum = parseFloat(cgpa);
+            if (isNaN(cgpaNum) || cgpaNum < 0 || cgpaNum > 10) {
+                showNotification('Please enter a valid CGPA between 0 and 10', 'error');
+                return;
+            }
+
+            // Validate graduation year
+            const currentYear = new Date().getFullYear();
+            const gradYear = parseInt(graduationYear);
+            if (isNaN(gradYear) || gradYear < 1950 || gradYear > currentYear + 10) {
+                showNotification('Please enter a valid graduation year', 'error');
+                return;
+            }
+
+            // Get existing profile data to preserve other fields
+            const existingProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+            const profileData = {
+                ...existingProfile,
+                fullName,
+                email,
+                phone,
+                education,
+                skills: skillsArray,
+                hasResume: existingProfile.hasResume || false,
+                resumeName: existingProfile.resumeName || ''
+            };
+
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+            showNotification('Profile saved successfully!', 'success');
+        }
+
+        function handleResumeUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Check file type
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                showNotification('Please upload a PDF or Word document', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('File size should be less than 5MB', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Get existing profile data
+                const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                
+                // Update profile with resume data
+                profileData.hasResume = true;
+                profileData.resumeName = file.name;
+                profileData.resumeData = e.target.result;
+                
+                localStorage.setItem('userProfile', JSON.stringify(profileData));
+                
+                // Update UI
+                document.getElementById('resumeName').textContent = file.name;
+                showNotification('Resume uploaded successfully!', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function loadProfile() {
+            const profileData = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            
+            // Load text fields
+            if (profileData.fullName) document.getElementById('fullName').value = profileData.fullName;
+            if (profileData.email) document.getElementById('email').value = profileData.email;
+            if (profileData.phone) document.getElementById('phone').value = profileData.phone;
+            
+            // Load education fields
+            if (profileData.education) {
+                const [degree, institution, specialization, graduationYear, cgpa] = profileData.education.split(', ');
+                document.getElementById('degree').value = degree || '';
+                document.getElementById('institution').value = institution || '';
+                document.getElementById('specialization').value = specialization || '';
+                document.getElementById('graduationYear').value = graduationYear || '';
+                document.getElementById('cgpa').value = cgpa || '';
+            }
+            
+            if (profileData.skills && Array.isArray(profileData.skills)) {
+                skillsArray = profileData.skills;
+                updateSkillTags();
+            }
+
+            // Show resume name if exists
+            if (profileData.resumeName) {
+                document.getElementById('resumeName').textContent = profileData.resumeName;
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function logout() {
+            localStorage.clear(); // Clear all stored data
+            window.location.href = 'index.html';
+        }
+
+        // Add this function to clear profile data on new signup
+        function clearProfileData() {
+            document.getElementById('fullName').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('degree').value = '';
+            document.getElementById('institution').value = '';
+            document.getElementById('specialization').value = '';
+            document.getElementById('graduationYear').value = '';
+            document.getElementById('cgpa').value = '';
+            skillsArray = [];
+            updateSkillTags();
+            document.getElementById('resumeName').textContent = '';
+            document.getElementById('resumeFile').value = '';
+        }
+
+        // Modify DOMContentLoaded event
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('loggedIn')) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Check if this is a new login
+            if (localStorage.getItem('newLogin')) {
+                clearProfileData();
+                localStorage.removeItem('newLogin');
+            } else {
+                loadProfile();
+            }
+
+            // Add input event listeners for real-time validation
+            document.getElementById('email').addEventListener('input', function() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(this.value)) {
+                    this.classList.add('invalid');
+                } else {
+                    this.classList.remove('invalid');
+                }
+            });
+
+            document.getElementById('phone').addEventListener('input', function() {
+                const phoneRegex = /^\d{10}$/;
+                if (!phoneRegex.test(this.value)) {
+                    this.classList.add('invalid');
+                } else {
+                    this.classList.remove('invalid');
+                }
+            });
+
+            document.getElementById('resumeFile').addEventListener('change', handleResumeUpload);
+
+            // Add skill input event listener
+            document.getElementById('skillInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addSkill(this.value);
+                    this.value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

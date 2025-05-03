@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KodJOBS - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="https://i.ibb.co/ZzMLRhKM/DALL-E-2025-03-16-10-36-12-A-professional-logo-for-Kod-Jobs-inspired-by-the-Kod-Nest-logo-Use-the-sa.webp" alt="KodJOBS">
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="active"><i class="fas fa-briefcase"></i> Jobs</a>
+            <a href="my-applications.html"><i class="fas fa-file-alt"></i> My Applications</a>
+            <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+            <button id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button id="logout-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="filters" data-aos="fade-down">
+            <input type="text" id="search" placeholder="🔍 Search by job title, company, or skills...">
+            <select id="location-filter">
+                <option value="">📍 All Locations</option>
+                <option value="bangalore">Bangalore</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="delhi">Delhi</option>
+                <option value="hyderabad">Hyderabad</option>
+                <option value="pune">Pune</option>
+                <option value="chennai">Chennai</option>
+            </select>
+            <select id="experience-filter">
+                <option value="">⭐ Experience Level</option>
+                <option value="entry">Entry Level</option>
+                <option value="mid">Mid Level</option>
+                <option value="senior">Senior Level</option>
+            </select>
+        </div>
+        <div id="jobs-container"></div>
+    </div>
+
+    <!-- Job Details Modal -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content" data-aos="zoom-in">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <img src="" alt="" class="company-logo" id="modal-company-logo">
+                <div>
+                    <h2 id="modal-job-title"></h2>
+                    <h3 id="modal-company-name"></h3>
+                    <p id="modal-location"></p>
+                </div>
+            </div>
+            <div class="job-info">
+                <div class="info-item">
+                    <h4><i class="fas fa-money-bill-wave"></i> Package</h4>
+                    <p id="modal-package"></p>
+                </div>
+                <div class="info-item">
+                    <h4><i class="fas fa-briefcase"></i> Experience</h4>
+                    <p id="modal-experience"></p>
+                </div>
+                <div class="info-item">
+                    <h4><i class="fas fa-clock"></i> Posted</h4>
+                    <p id="modal-posted-date"></p>
+                </div>
+            </div>
+            <div class="required-skills">
+                <h4><i class="fas fa-tools"></i> Required Skills</h4>
+                <div id="modal-skills" class="skills"></div>
+            </div>
+            <div class="job-description">
+                <h4><i class="fas fa-file-alt"></i> Job Description</h4>
+                <div id="modal-description"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="apply-btn" id="modal-apply-btn">Apply Now</button>
+                <button class="save-btn" id="modal-save-btn"><i class="far fa-bookmark"></i> Save Job</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+    <script src="dashboard.js"></script>
+    <script src="config.js"></script>
+</body>
+</html> 

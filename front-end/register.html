@@ -1,0 +1,20 @@
+<body>
+    <!-- Add this button before your registration form -->
+    <button onclick="testConnection()" style="margin: 10px;">Test MongoDB Connection</button>
+
+    <!-- Your existing form and content -->
+
+    <script>
+    async function testConnection() {
+        try {
+            const response = await fetch('http://localhost:5000/api/test/users');
+            const data = await response.json();
+            alert('Connection successful! Users found: ' + data.count);
+            console.log('MongoDB data:', data);
+        } catch (error) {
+            alert('Connection failed! Check console for details');
+            console.error('Error:', error);
+        }
+    }
+    </script>
+</body> 

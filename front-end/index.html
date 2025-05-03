@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KodJOBS - Your Career Starts Here</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Aurora Background -->
+    <div class="bg-aurora">
+        <div class="aurora-wave"></div>
+        <div class="aurora-wave"></div>
+        <div class="aurora-wave"></div>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="bg-elements">
+        <div class="bg-element"></div>
+        <div class="bg-element"></div>
+        <div class="bg-element"></div>
+    </div>
+
+    <div class="container">
+        <div class="login-signup-container">
+            <!-- Left Section -->
+            <div class="welcome-section">
+                <h1>WELCOME TO</h1>
+                <h2>KodJOBS</h2>
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/rK7yGThM/DALL-E-2025-03-16-10-36-12-A-professional-logo-for-Kod-Jobs-inspired-by-the-Kod-Nest-logo-Use-the-sa.webp" alt="KodJOBS Logo" class="logo">
+                </div>
+                <div class="motivational-text">
+                    <p>Your Career Starts Here</p>
+                    <p class="tagline">Connecting Talent With Opportunity</p>
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="forms-section">
+                <!-- Existing User Section -->
+                <div class="form-container login-section">
+                    <h3>Existing User?</h3>
+                    <form id="loginForm" class="animated-form">
+                        <div class="form-group">
+                            <input type="text" id="loginUsername" name="username" required>
+                            <label for="loginUsername">Username</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="loginPassword" name="password" required>
+                            <label for="loginPassword">Password</label>
+                        </div>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPassword">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="submit-btn login-btn">Login</button>
+                    </form>
+                </div>
+
+                <!-- New User Section -->
+                <div class="form-container signup-section">
+                    <h3>New User?</h3>
+                    <form id="signupForm" class="animated-form">
+                        <div class="form-group">
+                            <input type="text" id="signupUsername" name="username" required>
+                            <label for="signupUsername">Username</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="signupPassword" name="password" required>
+                            <label for="signupPassword">Password</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="signupEmail" name="email" required>
+                            <label for="signupEmail">E-mail ID</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="date" id="signupDob" name="dob" required>
+                            <label for="signupDob">Date of Birth</label>
+                        </div>
+                        <button type="submit" class="submit-btn signup-btn">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        window.onload = function() {
+            if(localStorage.getItem('loggedIn') === 'true') {
+                window.location.href = 'dashboard.html';
+            }
+            
+            // Set max date for DOB field
+            const dobInput = document.getElementById('signupDob');
+            if (dobInput) {
+                const today = new Date();
+                const maxDate = today.toISOString().split('T')[0];
+                dobInput.setAttribute('max', maxDate);
+            }
+        }
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log("Login form submitted");
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            if (!username || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.querySelector('.login-btn');
+            submitBtn.innerHTML = 'Logging in...';
+            submitBtn.disabled = true;
+
+            // Get existing users data
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            console.log("Users from localStorage:", users);
+            
+            // Find user with matching credentials
+            const user = users.find(u => {
+                const matchesUsername = u.name && u.name.toLowerCase() === username.toLowerCase();
+                const matchesEmail = u.email && u.email.toLowerCase() === username.toLowerCase();
+                const matchesPassword = u.password === password;
+                return (matchesUsername || matchesEmail) && matchesPassword;
+            });
+
+            if (!user) {
+                showNotification('Invalid username or password', 'error');
+                document.getElementById('loginPassword').value = '';
+                submitBtn.innerHTML = 'Login';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Set up user session
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('currentUser', user.email);
+
+            showNotification('Login successful! Welcome back, ' + user.name, 'success');
+            
+            // Reset button state
+            submitBtn.innerHTML = 'Login';
+            submitBtn.disabled = false;
+            
+            // Redirect after a short delay
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        });
+
+        // Signup functionality
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log("Signup form submitted");
+            
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value.trim();
+            const dob = document.getElementById('signupDob').value;
+
+            if (!username || !email || !password || !dob) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Validate username length
+            if (username.length < 3) {
+                showNotification('Username must be at least 3 characters long', 'error');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Validate password strength
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.querySelector('.signup-btn');
+            submitBtn.innerHTML = 'Creating Account...';
+            submitBtn.disabled = true;
+
+            // Get existing users or initialize empty array
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            console.log("Current users:", users);
+
+            // Check if username or email already exists
+            if (users.some(user => user.email && user.email.toLowerCase() === email.toLowerCase())) {
+                showNotification('Email already registered', 'error');
+                submitBtn.innerHTML = 'Sign Up';
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            if (users.some(user => user.name && user.name.toLowerCase() === username.toLowerCase())) {
+                showNotification('Username already taken', 'error');
+                submitBtn.innerHTML = 'Sign Up';
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                name: username,
+                email: email,
+                password: password,
+                dob: dob,
+                profile: {},
+                savedJobs: [],
+                applications: [],
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+
+            // Add to users array
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            console.log("Updated users:", JSON.parse(localStorage.getItem('users')));
+
+            showNotification('Account created successfully! Please login to continue.', 'success');
+            
+            // Clear form
+            document.getElementById('signupForm').reset();
+            
+            // Reset button state
+            submitBtn.innerHTML = 'Sign Up';
+            submitBtn.disabled = false;
+            
+            // Focus on login form
+            document.getElementById('loginUsername').focus();
+        });
+
+        function showNotification(message, type = 'success') {
+            console.log("Notification:", message, type);
+            
+            // Remove any existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => {
+                notification.remove();
+            });
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => notification.classList.add('show'), 10);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Debug functions
+        function checkRegisteredUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            console.log('Registered Users:', users);
+            return users;
+        }
+
+        function clearAllData() {
+            localStorage.clear();
+            showNotification('All data cleared', 'success');
+            console.log("All localStorage data cleared");
+        }
+    </script>
+</body>
+</html>

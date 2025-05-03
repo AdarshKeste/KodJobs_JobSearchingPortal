@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <style>
+        .page-header {
+            padding: 20px;
+            background: #fff;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .page-header h2 {
+            color: #333;
+            margin: 0;
+        }
+
+        .no-applications {
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .no-applications i {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .no-applications h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .no-applications p {
+            color: #666;
+        }
+
+        .no-applications a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #ff6600;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .no-applications a:hover {
+            background: #ff5500;
+        }
+
+        .application-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .application-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .application-logo {
+            width: 60px;
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .application-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .application-title h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .application-company {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .application-details {
+            padding: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            width: 120px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .application-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-applied {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .application-actions {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .saved-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #fff5eb;
+            color: #ff6600;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">Job Portal</div>
+        <div class="nav-links">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="saved-jobs.html">Saved Jobs</a>
+            <a href="applications.html" class="active">My Applications</a>
+            <a href="profile.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-paper-plane"></i> My Applications</h2>
+        </div>
+        <div id="applications-container">
+            <!-- Applications will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('loggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        function loadApplications() {
+            const container = document.getElementById('applications-container');
+            const applications = JSON.parse(localStorage.getItem('applications') || '[]');
+            
+            if (applications.length === 0) {
+                container.innerHTML = `
+                    <div class="no-applications">
+                        <i class="fas fa-paper-plane"></i>
+                        <h3>No Applications Yet</h3>
+                        <p>Start applying for jobs to see your applications here.</p>
+                        <a href="dashboard.html">Browse Jobs</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort applications by date (most recent first)
+            applications.sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate));
+
+            container.innerHTML = applications.map(app => `
+                <div class="application-card">
+                    <div class="application-header">
+                        <div class="application-logo">
+                            <img src="${app.companyLogo}" alt="${app.companyName} logo" 
+                                 onerror="this.src='https://via.placeholder.com/60x60?text=${app.companyName[0]}'">
+                        </div>
+                        <div class="application-title">
+                            <h3>${app.jobTitle}</h3>
+                            <div class="application-company">${app.companyName}</div>
+                        </div>
+                    </div>
+                    <div class="application-details">
+                        <div class="detail-row">
+                            <div class="detail-label">Location:</div>
+                            <div class="detail-value">${app.location}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Package:</div>
+                            <div class="detail-value">${app.salary}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Applied On:</div>
+                            <div class="detail-value">${new Date(app.appliedDate).toLocaleDateString()}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Status:</div>
+                            <div class="detail-value">
+                                <span class="application-status status-applied">
+                                    <i class="fas fa-check-circle"></i> ${app.status}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Required Skills:</div>
+                            <div class="detail-value">
+                                <div class="skills-list">
+                                    ${app.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            window.location.href = 'index.html';
+        }
+
+        // Load applications when page loads
+        document.addEventListener('DOMContentLoaded', loadApplications);
+    </script>
+</body>
+</html> 
